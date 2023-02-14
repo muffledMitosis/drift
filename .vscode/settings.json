@@ -1,0 +1,10 @@
+{
+	"files.associations": {
+		"cerrno": "cpp",
+		"tuple": "cpp"
+	},
+	"cSpell.words": [
+		"millis",
+		"SIMERR"
+	]
+}
