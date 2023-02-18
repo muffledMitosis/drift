@@ -10,7 +10,7 @@ SIM808::SIM808(HardwareSerial* serialDevice)
 	this->sysStat = new SIM808StatusDto();
 }
 
-bool SIM808::sendCommand(const char* command, const char* expectedResp, unsigned long timeout = 5000)
+ATResult SIM808::sendCommand(const char* command, const char* expectedResp, unsigned long timeout = 5000)
 {
 	this->sDev->println(command);
 
@@ -22,11 +22,15 @@ bool SIM808::sendCommand(const char* command, const char* expectedResp, unsigned
 			String resp = this->sDev->readString();
 			if(resp.indexOf(expectedResp) != -1)
 			{
-				return true;
+				return {resp, true};
+			}
+			else
+			{
+				return {resp, false};
 			}
 		}
 	}
-	return false;
+	return {"", false};
 }
 
 String SIM808::getResp(const char* command, unsigned long timeout = 5000)
@@ -90,6 +94,15 @@ String SIM808::getErrString()
 SIM808StatusDto* SIM808::getSysStatPtr()
 {
 	return this->sysStat;
+}
+
+void SIM808::SEND_AT(const char* command, const char* expected, const char* error_message)
+{
+	ATResult result = this->sendCommand(command, expected);
+	if(!result.status)
+	{
+		DEBUG_OUT(result.response + ", " + error_message);
+	}
 }
 
 SIM808::~SIM808()

@@ -6,8 +6,8 @@
 
 #include "./utils.h"
 
-#define RUN_ERR(run, err) if(!run) err
-#define SEND_AT(at, exp, err) RUN_ERR(this->sendCommand(at, exp), DEBUG_OUT(err))
+// #define RUN_ERR(run, err) if(!run) err
+// #define SEND_AT(at, exp, err) RUN_ERR(this->sendCommand(at, exp), DEBUG_OUT(err))
 
 enum SIMERR
 {
@@ -21,6 +21,12 @@ struct SIM808StatusDto
 	bool gpsFix, up, gps, bt, gsm = false;
 };
 
+struct ATResult
+{
+	String response;
+	bool status;
+};
+
 class SIM808
 {
 private:
@@ -29,7 +35,7 @@ private:
 	String errorString;
 	SIM808StatusDto *sysStat;
 
-	bool sendCommand(const char* command, const char* expectedResp, unsigned long timeout);
+	ATResult sendCommand(const char* command, const char* expectedResp, unsigned long timeout);
 	String getResp(const char* command, unsigned long timeout);
 
 public:
@@ -42,6 +48,8 @@ public:
 	String getErrString();
 	SIM808StatusDto* getSysStatPtr();
 	String getGPSInfo();
+
+	inline void SEND_AT(const char* command, const char* expected, const char* error_message);
 
 	~SIM808();
 };
